@@ -5,7 +5,7 @@
 // =============================================================================
 
 import { initAuth, signIn, signUp, signOut, completeProfile,
-         showAuthModal, getCurrentUser, getCurrentCollegeId } from './auth.js';
+         showAuthModal, getCurrentUser, getCurrentCollegeId, getCurrentRole } from './auth.js';
 import { initSidebar, getSelectedSlug, setSelectedSlug, refreshNavBadges } from './ui/sidebar.js';
 import { initFeed, changeFeedCollege, refreshFeed,
          handleFilterToggle, handleSortChange, handleSearch,
@@ -78,6 +78,31 @@ async function handleCollegeChange(slug) {
 
   showToast(`🏛️ Switched to ${college.name}`, 'success');
   await loadPageData(college.id);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Role UI
+// ─────────────────────────────────────────────────────────────────────────────
+function applyRoleUI(role) {
+  const isContributor = role === 'contributor';
+
+  // Show/hide contribute nav section
+  const contributeSection = document.getElementById('nav-contribute-section');
+  if (contributeSection) contributeSection.style.display = isContributor ? '' : 'none';
+
+  // Show role hero banner
+  const fresherHero     = document.getElementById('hero-fresher');
+  const contributorHero = document.getElementById('hero-contributor');
+  if (fresherHero)     fresherHero.style.display     = isContributor ? 'none' : 'flex';
+  if (contributorHero) contributorHero.style.display = isContributor ? 'flex' : 'none';
+
+  // Role badge in sidebar
+  const badge = document.getElementById('user-role-badge');
+  if (badge) {
+    badge.textContent  = isContributor ? '⭐ Contributor' : '🎓 Fresher';
+    badge.className    = isContributor ? 'role-chip contributor' : 'role-chip fresher';
+    badge.style.display = '';
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -202,11 +227,15 @@ async function boot() {
   // Init auth (checks session, shows modal if not logged in)
   await initAuth(async (user, profile) => {
     // Called whenever auth state changes
+    if (profile) applyRoleUI(profile.role ?? 'fresher');
     const cid = profile?.college?.id;
     if (cid) {
       await loadPageData(cid);
     }
   });
+
+  // Apply role UI for existing session
+  applyRoleUI(getCurrentRole());
 
   // Initial data load (use college from sidebar)
   const college = await fetchCollegeBySlug(getSelectedSlug());

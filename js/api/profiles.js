@@ -14,7 +14,7 @@ export async function getProfile(userId) {
   const { data, error } = await supabase
     .from('profiles')
     .select(`
-      id, full_name, initials, branch, year,
+      id, full_name, initials, branch, year, role,
       credibility_score, tips_submitted, tips_verified,
       verification_rate, upvote_ratio, timeliness_score,
       college:colleges (id, name, slug)

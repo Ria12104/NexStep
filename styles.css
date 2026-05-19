@@ -1196,3 +1196,72 @@ body::before {
     padding: 28px 22px;
   }
 }
+
+/* ── ROLE HERO BANNERS ── */
+.role-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  border: 1px solid;
+  animation: fadeIn 0.3s ease;
+}
+
+.role-hero--fresher {
+  background: linear-gradient(135deg, rgba(77,166,255,0.08), rgba(77,166,255,0.03));
+  border-color: rgba(77,166,255,0.25);
+}
+
+.role-hero--contributor {
+  background: linear-gradient(135deg, rgba(245,166,35,0.1), rgba(245,166,35,0.03));
+  border-color: rgba(245,166,35,0.3);
+}
+
+.role-hero-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.role-hero-content { flex: 1; }
+
+.role-hero-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.role-hero-desc {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+/* ── ROLE CHIP (sidebar badge) ── */
+.role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.role-chip.fresher {
+  background: var(--blue-dim);
+  color: var(--blue);
+  border: 1px solid rgba(77,166,255,0.2);
+}
+
+.role-chip.contributor {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid rgba(245,166,35,0.25);
+}

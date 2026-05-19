@@ -164,14 +164,16 @@
       <span class="nav-icon">📅</span> Deadline Calendar
     </a>
 
-    <div class="nav-label">Contribute</div>
-    <a class="nav-item" onclick="NexStep.showPage('submit', this)">
-      <span class="nav-icon">✍️</span> Submit Intel
-    </a>
-    <a class="nav-item" id="nav-verify" onclick="NexStep.showPage('verify', this)">
-      <span class="nav-icon">✅</span> Verify Queue
-      <span class="nav-badge blue" style="display:none;">0</span>
-    </a>
+    <div id="nav-contribute-section">
+      <div class="nav-label">Contribute</div>
+      <a class="nav-item" id="nav-submit" onclick="NexStep.showPage('submit', this)">
+        <span class="nav-icon">✍️</span> Submit Intel
+      </a>
+      <a class="nav-item" id="nav-verify" onclick="NexStep.showPage('verify', this)">
+        <span class="nav-icon">✅</span> Verify Queue
+        <span class="nav-badge blue" style="display:none;">0</span>
+      </a>
+    </div>
 
     <div class="nav-label">Platform</div>
     <a class="nav-item" onclick="NexStep.showPage('leaderboard', this)">
@@ -189,6 +191,7 @@
         <div class="user-name" id="user-display-name">Sign in</div>
         <div class="user-role" id="user-display-role"></div>
       </div>
+      <span id="user-role-badge" style="display:none;"></span>
     </div>
     <button id="sidebar-logout-btn" class="btn btn-ghost btn-sm"
             style="display:none;width:100%;margin-top:10px;"
@@ -217,6 +220,22 @@
 
   <!-- ── PAGE: INTEL FEED ── -->
   <div class="page active" id="page-feed">
+    <!-- Role hero banners — shown/hidden by applyRoleUI() -->
+    <div id="hero-fresher" class="role-hero role-hero--fresher" style="display:none;">
+      <div class="role-hero-icon">👋</div>
+      <div class="role-hero-content">
+        <div class="role-hero-title">You're a Fresher — intel curated by seniors, just for you</div>
+        <div class="role-hero-desc">Get proactive nudges on deadlines, faculty preferences, and recruiting pipelines — <strong>before the window closes</strong>.</div>
+      </div>
+    </div>
+    <div id="hero-contributor" class="role-hero role-hero--contributor" style="display:none;">
+      <div class="role-hero-icon">⭐</div>
+      <div class="role-hero-content">
+        <div class="role-hero-title">You're a Contributor — your intel helps freshers navigate college</div>
+        <div class="role-hero-desc">Submit time-sensitive tips or head to the <strong>Verify Queue</strong> to peer-review pending intel.</div>
+      </div>
+      <button class="btn btn-primary" style="flex-shrink:0;" onclick="NexStep.showPage('submit', document.getElementById('nav-submit'))">+ Submit Intel</button>
+    </div>
     <div class="stats-row">
       <div class="stat-card amber">
         <div class="stat-label">Active Intel</div>

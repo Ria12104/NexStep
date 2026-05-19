@@ -37,6 +37,12 @@ export async function handleSubmitIntel() {
     return;
   }
 
+  // Role gate: only contributors can submit
+  if (profile?.role === 'fresher') {
+    showToast('Only Contributors (3rd year+) can submit intel.', 'warning');
+    return;
+  }
+
   // Gather form values
   const title    = document.getElementById('submit-title')?.value.trim()    || '';
   const desc     = document.getElementById('submit-desc')?.value.trim()     || '';

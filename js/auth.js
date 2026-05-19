@@ -15,10 +15,19 @@ let _currentUser    = null;
 let _currentProfile = null;
 let _colleges       = [];
 
+// Years that qualify as Contributor
+const CONTRIBUTOR_YEARS = new Set(['3rd Year', 'Final Year', 'Postgrad', 'Alumni']);
+
+function _deriveRole(year) {
+  return CONTRIBUTOR_YEARS.has(year) ? 'contributor' : 'fresher';
+}
+
 /** @returns {Object|null} Supabase auth user */
 export function getCurrentUser()    { return _currentUser; }
 /** @returns {Object|null} NexStep profile row */
 export function getCurrentProfile() { return _currentProfile; }
+/** @returns {'fresher'|'contributor'} */
+export function getCurrentRole()    { return _currentProfile?.role ?? 'fresher'; }
 /** @returns {string|null} College UUID */
 export function getCurrentCollegeId() {
   return _currentProfile?.college?.id ?? null;
@@ -110,12 +119,15 @@ export async function completeProfile({ fullName, branch, year, collegeId }) {
     .join('')
     .slice(0, 2) || '??';
 
+  const role = _deriveRole(year);
+
   const { error } = await updateProfile(_currentUser.id, {
     full_name:  fullName,
     initials,
     branch,
     year,
     college_id: collegeId,
+    role,
   });
 
   if (!error) {

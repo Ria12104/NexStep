@@ -118,19 +118,35 @@ export async function signOut() {
 }
 
 /**
- * Set a fully-local demo profile (no Supabase).
- * Call this to enter demo mode without registration.
+ * Set a fully-local demo profile (no registration).
+ * Calls signInAnonymously() first so RLS-protected tables return real data,
+ * then overlays a friendly display name + role.
  * @param {'fresher'|'contributor'} role
- * @param {string} [collegeId]  optional — if omitted, data loads from sidebar college
+ * @param {string} [collegeId]
  */
-export function setDemoProfile(role, collegeId = null) {
+export async function setDemoProfile(role, collegeId = null) {
   const isContributor = role === 'contributor';
-  _currentUser = {
-    id:    'demo-' + role,
-    email: role + '@demo.nexstep',
-  };
+
+  // Try to get a real Supabase session so RLS policies pass
+  let realUserId = 'demo-' + role;
+  try {
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (!error && data?.user) {
+      realUserId = data.user.id;
+      _currentUser = data.user;
+    }
+  } catch (_) {
+    // Anonymous auth not enabled — continue with fake id
+    _currentUser = { id: realUserId, email: role + '@demo.nexstep' };
+  }
+
+  // If signInAnonymously didn't set _currentUser (error path)
+  if (!_currentUser) {
+    _currentUser = { id: realUserId, email: role + '@demo.nexstep' };
+  }
+
   _currentProfile = {
-    id:                'demo-' + role,
+    id:                realUserId,
     full_name:         isContributor ? 'Demo Contributor' : 'Demo Fresher',
     initials:          isContributor ? 'DC' : 'DF',
     branch:            'CSE',
@@ -144,7 +160,6 @@ export function setDemoProfile(role, collegeId = null) {
 
   hideAuthModal();
   updateSidebarUserCard(_currentProfile);
-  // Show logout button for demo too
   const logoutBtn = document.getElementById('sidebar-logout-btn');
   if (logoutBtn) logoutBtn.style.display = 'block';
 

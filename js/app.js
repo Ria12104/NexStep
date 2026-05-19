@@ -204,7 +204,7 @@ async function handleDemoLogin(role) {
   const slug    = getSelectedSlug();
   const college = slug ? await fetchCollegeBySlug(slug) : null;
 
-  const profile = setDemoProfile(role, college?.id ?? null);
+  const profile = await setDemoProfile(role, college?.id ?? null);
 
   // Apply role-gated UI
   applyRoleUI(role);

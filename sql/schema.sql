@@ -170,11 +170,12 @@ CREATE TRIGGER profiles_updated_at
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, full_name, initials)
+  INSERT INTO public.profiles (id, full_name, initials, role)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
-    COALESCE(UPPER(LEFT(NEW.raw_user_meta_data->>'full_name', 1)), '?')
+    COALESCE(UPPER(LEFT(NEW.raw_user_meta_data->>'full_name', 1)), '?'),
+    'fresher'
   );
   RETURN NEW;
 END;
@@ -184,25 +185,33 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- Update intel.verified_count when a verification is inserted/deleted
+-- Update intel.verified_count when a verification is inserted/updated/deleted
 CREATE OR REPLACE FUNCTION sync_verified_count()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN
+  -- Handle INSERT: increment if approve
   IF TG_OP = 'INSERT' AND NEW.action = 'approve' THEN
-    UPDATE public.intel
-    SET verified_count = verified_count + 1
-    WHERE id = NEW.intel_id;
+    UPDATE public.intel SET verified_count = verified_count + 1 WHERE id = NEW.intel_id;
+
+  -- Handle DELETE: decrement if was approve
   ELSIF TG_OP = 'DELETE' AND OLD.action = 'approve' THEN
-    UPDATE public.intel
-    SET verified_count = GREATEST(verified_count - 1, 0)
-    WHERE id = OLD.intel_id;
+    UPDATE public.intel SET verified_count = GREATEST(verified_count - 1, 0) WHERE id = OLD.intel_id;
+
+  -- Handle UPDATE (upsert changing action): adjust delta
+  ELSIF TG_OP = 'UPDATE' THEN
+    IF OLD.action = 'approve' AND NEW.action != 'approve' THEN
+      UPDATE public.intel SET verified_count = GREATEST(verified_count - 1, 0) WHERE id = NEW.intel_id;
+    ELSIF OLD.action != 'approve' AND NEW.action = 'approve' THEN
+      UPDATE public.intel SET verified_count = verified_count + 1 WHERE id = NEW.intel_id;
+    END IF;
   END IF;
   RETURN NULL;
 END;
 $$;
 
+DROP TRIGGER IF EXISTS sync_intel_verified_count ON public.verifications;
 CREATE TRIGGER sync_intel_verified_count
-  AFTER INSERT OR DELETE ON public.verifications
+  AFTER INSERT OR UPDATE OR DELETE ON public.verifications
   FOR EACH ROW EXECUTE FUNCTION sync_verified_count();
 
 -- Update intel.bookmark_count when bookmarks change

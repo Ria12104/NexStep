@@ -10,7 +10,7 @@ import { initSidebar, getSelectedSlug, setSelectedSlug, refreshNavBadges } from 
 import { initFeed, changeFeedCollege, refreshFeed,
          handleFilterToggle, handleSortChange, handleSearch,
          handleUpvote, handleBookmark } from './ui/feed.js';
-import { renderStats } from './ui/stats.js';
+import { renderStats, renderCredibilityWidget } from './ui/stats.js';
 import { renderAlerts, handleMarkAllRead } from './ui/alerts.js';
 import { renderCalendar, calPrevMonth, calNextMonth } from './ui/calendar.js';
 import { handleSubmitIntel, handleUrgencySelect, initSubmitForm } from './ui/submit.js';
@@ -86,9 +86,15 @@ async function handleCollegeChange(slug) {
 function applyRoleUI(role) {
   const isContributor = role === 'contributor';
 
-  // Show/hide contribute nav section
+  // Always show contribute section — but dim for freshers with a tooltip
   const contributeSection = document.getElementById('nav-contribute-section');
-  if (contributeSection) contributeSection.style.display = isContributor ? '' : 'none';
+  if (contributeSection) {
+    contributeSection.style.display = '';
+    contributeSection.style.opacity = isContributor ? '1' : '0.5';
+    contributeSection.title = isContributor
+      ? ''
+      : 'Only 3rd year+ contributors can submit intel';
+  }
 
   // Show role hero banner
   const fresherHero     = document.getElementById('hero-fresher');
@@ -104,6 +110,7 @@ function applyRoleUI(role) {
     badge.style.display = '';
   }
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Auth Modal Handlers
@@ -240,6 +247,9 @@ async function loadPageData(collegeId) {
     renderStats(collegeId),
     refreshNavBadges(collegeId, user?.id),
   ]);
+
+  // Update credibility widget with logged-in user
+  renderCredibilityWidget();
 
   // Generate deadline alerts for logged-in user
   if (user) {

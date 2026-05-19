@@ -560,6 +560,7 @@ body::before {
 }
 .action-btn:hover { color: var(--accent); }
 .action-btn.verified { color: var(--green); }
+.action-btn.saved { color: var(--accent); }
 
 .deadline-pill {
   display: flex;
@@ -861,6 +862,8 @@ body::before {
   border-bottom: 1px solid var(--border);
 }
 .leaderboard-item:last-child { border-bottom: none; }
+
+.leaderboard-list { padding: 0 20px; }
 
 .rank-num {
   font-family: var(--font-mono);

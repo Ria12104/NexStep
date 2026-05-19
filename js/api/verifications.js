@@ -7,6 +7,12 @@ import { supabase } from '../supabase.js';
 import { awardCredibilityPoints } from './profiles.js';
 import { approveIntel, flagIntel } from './intel.js';
 
+// Guard: skip DB calls if userId is not a valid UUID (demo mode fallback)
+function isValidUUID(id) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+}
+
+
 // Credibility point rewards per action
 const POINTS = {
   verify_action:   +15,  // earned by verifier for each approve/flag action
@@ -32,6 +38,10 @@ const AUTO_APPROVE_THRESHOLD = 3;
 export async function submitVerification(intelId, verifierId, action, authorId) {
   // Skip doesn't write to DB — it's purely a UI action
   if (action === 'skip') {
+    return { success: true, error: null };
+  }
+  // Gracefully skip if verifier isn't a real DB user (demo mode)
+  if (!isValidUUID(verifierId)) {
     return { success: true, error: null };
   }
 
@@ -83,6 +93,8 @@ export async function submitVerification(intelId, verifierId, action, authorId) 
  * @returns {Promise<string|null>}  Returns the action ('approve'/'flag') or null
  */
 export async function getUserVerificationAction(intelId, userId) {
+  if (!isValidUUID(userId)) return null;
+
   const { data, error } = await supabase
     .from('verifications')
     .select('action')

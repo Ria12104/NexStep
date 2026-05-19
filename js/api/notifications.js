@@ -5,6 +5,12 @@
 
 import { supabase } from '../supabase.js';
 
+// Guard: skip DB calls if userId is not a valid UUID (demo mode fallback)
+function isValidUUID(id) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+}
+
+
 /**
  * Fetch notifications for the current user, newest first.
  * @param {string} userId
@@ -12,6 +18,8 @@ import { supabase } from '../supabase.js';
  * @returns {Promise<Array>}
  */
 export async function fetchNotifications(userId, limit = 20) {
+  if (!isValidUUID(userId)) return [];
+
   const { data, error } = await supabase
     .from('notifications')
     .select('id, type, title, body, is_read, intel_id, created_at')
@@ -32,6 +40,8 @@ export async function fetchNotifications(userId, limit = 20) {
  * @returns {Promise<number>}
  */
 export async function countUnreadNotifications(userId) {
+  if (!isValidUUID(userId)) return 0;
+
   const { count, error } = await supabase
     .from('notifications')
     .select('id', { count: 'exact', head: true })
@@ -73,6 +83,8 @@ export async function markAllNotificationsRead(userId) {
  * @param {Array}  upcomingIntel - from fetchUpcomingDeadlines()
  */
 export async function generateDeadlineAlerts(userId, upcomingIntel) {
+  if (!isValidUUID(userId)) return; // skip for demo users
+
   const alerts = upcomingIntel
     .filter(item => item.deadline_at)
     .map(item => {

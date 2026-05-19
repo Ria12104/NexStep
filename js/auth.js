@@ -127,8 +127,12 @@ export async function signOut() {
 export async function setDemoProfile(role, collegeId = null) {
   const isContributor = role === 'contributor';
 
-  // Try to get a real Supabase session so RLS policies pass
-  let realUserId = 'demo-' + role;
+  // Fallback UUIDs for demo mode (valid RFC-4122 format so Supabase won't reject them)
+  const DEMO_UUID_CONTRIBUTOR = '00000000-0000-0000-0000-000000000001';
+  const DEMO_UUID_FRESHER     = '00000000-0000-0000-0000-000000000002';
+  let realUserId = isContributor ? DEMO_UUID_CONTRIBUTOR : DEMO_UUID_FRESHER;
+
+  // Try to get a real Supabase anonymous session so RLS policies pass
   try {
     const { data, error } = await supabase.auth.signInAnonymously();
     if (!error && data?.user) {
@@ -136,8 +140,7 @@ export async function setDemoProfile(role, collegeId = null) {
       _currentUser = data.user;
     }
   } catch (_) {
-    // Anonymous auth not enabled — continue with fake id
-    _currentUser = { id: realUserId, email: role + '@demo.nexstep' };
+    // Anonymous auth not enabled — use valid UUID fallback
   }
 
   // If signInAnonymously didn't set _currentUser (error path)

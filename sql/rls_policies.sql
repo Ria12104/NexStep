@@ -13,6 +13,27 @@ ALTER TABLE public.verifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bookmarks     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies so this file can be safely re-run
+DROP POLICY IF EXISTS "colleges_read_all"           ON public.colleges;
+DROP POLICY IF EXISTS "profiles_read_all"            ON public.profiles;
+DROP POLICY IF EXISTS "profiles_insert_trigger"      ON public.profiles;
+DROP POLICY IF EXISTS "profiles_update_own"          ON public.profiles;
+DROP POLICY IF EXISTS "intel_read_approved"          ON public.intel;
+DROP POLICY IF EXISTS "intel_read_pending_auth"      ON public.intel;
+DROP POLICY IF EXISTS "intel_insert_own"             ON public.intel;
+DROP POLICY IF EXISTS "intel_update_own"             ON public.intel;
+DROP POLICY IF EXISTS "intel_delete_own"             ON public.intel;
+DROP POLICY IF EXISTS "verifications_read_auth"      ON public.verifications;
+DROP POLICY IF EXISTS "verifications_insert_others"  ON public.verifications;
+DROP POLICY IF EXISTS "verifications_update_own"     ON public.verifications;
+DROP POLICY IF EXISTS "verifications_delete_own"     ON public.verifications;
+DROP POLICY IF EXISTS "bookmarks_read_own"           ON public.bookmarks;
+DROP POLICY IF EXISTS "bookmarks_insert_own"         ON public.bookmarks;
+DROP POLICY IF EXISTS "bookmarks_delete_own"         ON public.bookmarks;
+DROP POLICY IF EXISTS "notifications_read_own"       ON public.notifications;
+DROP POLICY IF EXISTS "notifications_update_own"     ON public.notifications;
+DROP POLICY IF EXISTS "notifications_insert_own"     ON public.notifications;
+
 
 -- =============================================================================
 -- COLLEGES — public read, no write (managed by admin via Supabase dashboard)
@@ -31,13 +52,15 @@ CREATE POLICY "profiles_read_all"
   ON public.profiles FOR SELECT
   USING (true);
 
+-- Allow trigger to create profile on signup (service role bypass isn't always available)
+CREATE POLICY "profiles_insert_trigger"
+  ON public.profiles FOR INSERT
+  WITH CHECK (true);  -- only runs via SECURITY DEFINER trigger
+
 -- Users can only update their own profile
 CREATE POLICY "profiles_update_own"
   ON public.profiles FOR UPDATE
   USING (auth.uid() = id);
-
--- System (trigger) handles INSERT — allow service role only
--- (profile is created automatically via trigger on auth.users insert)
 
 
 -- =============================================================================
@@ -95,6 +118,11 @@ CREATE POLICY "verifications_insert_others"
       WHERE id = intel_id AND author_id = auth.uid()
     )
   );
+
+-- Users can update (change) their own verification action (needed for upsert)
+CREATE POLICY "verifications_update_own"
+  ON public.verifications FOR UPDATE
+  USING (auth.uid() = verifier_id);
 
 -- Users can delete their own verification (to undo)
 CREATE POLICY "verifications_delete_own"

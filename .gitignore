@@ -1,7 +1,8 @@
 # NexStep — .gitignore
 
-# Supabase config with real keys — NEVER commit this
-config.js
+# config.js contains your publishable anon key — safe to commit (RLS protects data)
+# Uncomment below only if you switch to a secret service-role key:
+# config.js
 
 # macOS
 .DS_Store

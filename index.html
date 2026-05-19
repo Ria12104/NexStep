@@ -13,6 +13,8 @@
 
 <!-- Supabase keys (must load before app.js module) -->
 <script src="config.js"></script>
+<!-- Main app entry point (ES module — loads after config.js sets window globals) -->
+<script type="module" src="js/app.js"></script>
 
 <div class="overlay" id="overlay" onclick="NexStep.closeSidebar()"></div>
 
@@ -300,8 +302,10 @@
       </div>
     </div>
   </div>
-</div><!-- /main — continues in part 2 -->
+</div><!-- /main -->
+
+<!-- Toast notification container -->
+<div class="toast-container" id="toast-container"></div>
 
 </body>
 </html>
-<!-- PART 2 PLACEHOLDER - will be written next -->

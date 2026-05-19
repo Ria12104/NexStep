@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexStep — The Hidden Curriculum, Uncovered</title>
+<meta name="description" content="NexStep surfaces the insider knowledge seniors know and freshers need — scholarships, professor preferences, recruiting pipelines, and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Supabase keys (must load before app.js module) -->
+<script src="config.js"></script>
+
+<div class="overlay" id="overlay" onclick="NexStep.closeSidebar()"></div>
+
+<!-- ── AUTH MODAL ── -->
+<div class="auth-modal-overlay" id="auth-modal">
+  <div class="auth-modal">
+    <div class="auth-logo">
+      <div class="logo-icon" style="width:40px;height:40px;font-size:20px;border-radius:10px;">N</div>
+      <div>
+        <div class="logo-text" style="font-size:22px;">NexStep</div>
+        <div class="logo-tagline" style="margin-left:0;font-size:11px;">Hidden curriculum, decoded</div>
+      </div>
+    </div>
+
+    <!-- Login Panel -->
+    <div id="auth-login-panel">
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Sign in to access intel for your college</div>
+      <div class="form-group" style="margin-top:20px;">
+        <label class="form-label">Email</label>
+        <input id="login-email" class="form-input" type="email" placeholder="you@college.edu">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input id="login-password" class="form-input" type="password" placeholder="••••••••"
+               onkeydown="if(event.key==='Enter') NexStep.handleLogin()">
+      </div>
+      <button id="login-btn" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;margin-top:4px;"
+              onclick="NexStep.handleLogin()">Sign In</button>
+      <div class="auth-switch">
+        Don't have an account?
+        <a onclick="NexStep.switchAuthMode('signup')">Create one →</a>
+      </div>
+    </div>
+
+    <!-- Signup Panel -->
+    <div id="auth-signup-panel" style="display:none;">
+      <div class="auth-title">Join NexStep</div>
+      <div class="auth-sub">Access the hidden curriculum at your college</div>
+      <div class="form-group" style="margin-top:20px;">
+        <label class="form-label">Full Name</label>
+        <input id="signup-name" class="form-input" type="text" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">College Email</label>
+        <input id="signup-email" class="form-input" type="email" placeholder="you@iitd.ac.in">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input id="signup-password" class="form-input" type="password" placeholder="Min. 6 characters">
+      </div>
+      <button id="signup-btn" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;margin-top:4px;"
+              onclick="NexStep.handleSignup()">Create Account</button>
+      <div class="auth-switch">
+        Already have an account?
+        <a onclick="NexStep.switchAuthMode('login')">Sign in →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROFILE SETUP MODAL ── -->
+<div class="auth-modal-overlay" id="profile-setup-modal">
+  <div class="auth-modal">
+    <div class="auth-logo">
+      <div class="logo-icon" style="width:40px;height:40px;font-size:20px;border-radius:10px;">N</div>
+      <div>
+        <div class="logo-text" style="font-size:22px;">NexStep</div>
+        <div class="logo-tagline" style="margin-left:0;">One-time setup</div>
+      </div>
+    </div>
+    <div class="auth-title">Complete Your Profile</div>
+    <div class="auth-sub">This helps us show you the right intel</div>
+    <div class="form-group" style="margin-top:20px;">
+      <label class="form-label">Full Name</label>
+      <input id="setup-name" class="form-input" type="text" placeholder="Your full name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">College <span>*</span></label>
+      <select id="setup-college" class="form-select">
+        <option value="">Select your college...</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Branch <span>*</span></label>
+        <select id="setup-branch" class="form-select">
+          <option value="">Select...</option>
+          <option value="cs">CSE</option>
+          <option value="ece">ECE</option>
+          <option value="me">ME</option>
+          <option value="civil">Civil</option>
+          <option value="chemical">Chemical</option>
+          <option value="electrical">Electrical</option>
+          <option value="physics">Physics</option>
+          <option value="mathematics">Mathematics</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Year <span>*</span></label>
+        <select id="setup-year" class="form-select">
+          <option value="">Select...</option>
+          <option value="1st Year">1st Year</option>
+          <option value="2nd Year">2nd Year</option>
+          <option value="3rd Year">3rd Year</option>
+          <option value="Final Year">Final Year</option>
+          <option value="Postgrad">Postgrad</option>
+          <option value="Alumni">Alumni</option>
+        </select>
+      </div>
+    </div>
+    <button id="setup-complete-btn" class="btn btn-primary"
+            style="width:100%;padding:12px;font-size:14px;margin-top:4px;"
+            onclick="NexStep.handleProfileComplete()">Complete Setup →</button>
+  </div>
+</div>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">N</div>
+      <div class="logo-text">NexStep</div>
+    </div>
+    <div class="logo-tagline">Hidden curriculum, decoded</div>
+  </div>
+
+  <div class="college-selector">
+    <span>🏛️</span>
+    <select id="college-select" onchange="NexStep.handleCollegeChange(this.value)">
+      <option value="">Loading...</option>
+    </select>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Feed</div>
+    <a class="nav-item active" id="nav-feed" onclick="NexStep.showPage('feed', this)">
+      <span class="nav-icon">📡</span> Intel Feed
+      <span class="nav-badge amber" style="display:none;">0</span>
+    </a>
+    <a class="nav-item" id="nav-alerts" onclick="NexStep.showPage('alerts', this)">
+      <span class="nav-icon">🔔</span> Alerts
+      <span class="nav-badge" style="display:none;">0</span>
+    </a>
+    <a class="nav-item" onclick="NexStep.showPage('calendar', this)">
+      <span class="nav-icon">📅</span> Deadline Calendar
+    </a>
+
+    <div class="nav-label">Contribute</div>
+    <a class="nav-item" onclick="NexStep.showPage('submit', this)">
+      <span class="nav-icon">✍️</span> Submit Intel
+    </a>
+    <a class="nav-item" id="nav-verify" onclick="NexStep.showPage('verify', this)">
+      <span class="nav-icon">✅</span> Verify Queue
+      <span class="nav-badge blue" style="display:none;">0</span>
+    </a>
+
+    <div class="nav-label">Platform</div>
+    <a class="nav-item" onclick="NexStep.showPage('leaderboard', this)">
+      <span class="nav-icon">🏆</span> Leaderboard
+    </a>
+    <a class="nav-item" onclick="NexStep.showPage('bizmodel', this)">
+      <span class="nav-icon">💼</span> Business Model
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar" id="user-avatar-initials">?</div>
+      <div class="user-info">
+        <div class="user-name" id="user-display-name">Sign in</div>
+        <div class="user-role" id="user-display-role"></div>
+      </div>
+    </div>
+    <button id="sidebar-logout-btn" class="btn btn-ghost btn-sm"
+            style="display:none;width:100%;margin-top:10px;"
+            onclick="NexStep.handleLogout()">Sign Out</button>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="mobile-menu-btn" onclick="NexStep.toggleSidebar()">☰</button>
+    <div class="topbar-title" id="topbar-title">Intel Feed</div>
+    <div class="search-bar">
+      <span style="color:var(--text3);font-size:14px;">🔍</span>
+      <input type="text" id="feed-search-input" placeholder="Search intel, professors, deadlines..."
+             oninput="NexStep.updateFeedSearch(this.value)">
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary"
+              onclick="NexStep.showPage('submit', document.querySelector('.nav-item:nth-child(6)'))">
+        + Submit Intel
+      </button>
+    </div>
+  </header>
+
+  <!-- ── PAGE: INTEL FEED ── -->
+  <div class="page active" id="page-feed">
+    <div class="stats-row">
+      <div class="stat-card amber">
+        <div class="stat-label">Active Intel</div>
+        <div class="stat-value" id="stat-active-intel">—</div>
+        <div class="stat-change hot">↑ from Supabase</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">Verified Tips</div>
+        <div class="stat-value">91%</div>
+        <div class="stat-change up">↑ peer-reviewed</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Senior Contributors</div>
+        <div class="stat-value" id="stat-contributors">—</div>
+        <div class="stat-change up">↑ this semester</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-label">Freshers Saved</div>
+        <div class="stat-value">∞</div>
+        <div class="stat-change up">missed deadlines prevented</div>
+      </div>
+    </div>
+
+    <div class="feed-grid">
+      <div>
+        <div class="section-header">
+          <div>
+            <div class="section-title">Intelligence Feed</div>
+            <div class="section-sub" id="feed-subtitle">Loading...</div>
+          </div>
+          <div class="sort-selector" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;">
+            <span style="font-size:12px;color:var(--text3);user-select:none;">Sort by:</span>
+            <select id="feed-sort" onchange="NexStep.updateFeedSort(this.value)"
+                    style="background:none;border:none;color:var(--text2);font-family:var(--font-body);font-size:13px;outline:none;cursor:pointer;">
+              <option value="urgency" style="background:var(--surface2);">Urgency</option>
+              <option value="verified" style="background:var(--surface2);">Verified Count</option>
+              <option value="recency" style="background:var(--surface2);">Newest First</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="feed-filters">
+          <div class="filter-chip active" onclick="NexStep.filterToggle(this)">🔥 All</div>
+          <div class="filter-chip" onclick="NexStep.filterToggle(this)">📚 Academics</div>
+          <div class="filter-chip" onclick="NexStep.filterToggle(this)">🏢 Recruiting</div>
+          <div class="filter-chip" onclick="NexStep.filterToggle(this)">💰 Scholarships</div>
+          <div class="filter-chip" onclick="NexStep.filterToggle(this)">🧑‍🔬 Research</div>
+          <div class="filter-chip" onclick="NexStep.filterToggle(this)">🎭 Campus Life</div>
+          <div class="filter-chip blue-chip" onclick="NexStep.filterToggle(this)">CS</div>
+          <div class="filter-chip blue-chip" onclick="NexStep.filterToggle(this)">ECE</div>
+          <div class="filter-chip blue-chip" onclick="NexStep.filterToggle(this)">ME</div>
+        </div>
+
+        <!-- Cards injected here by feed.js -->
+        <div id="intel-cards-container"></div>
+      </div>
+
+      <!-- Sidebar Widgets -->
+      <div>
+        <div class="widget">
+          <div class="widget-header">
+            ⏳ Closing Soon
+            <span class="tag tag-urgent" style="font-size:10px;">CRITICAL</span>
+          </div>
+          <div class="widget-body deadline-list">
+            <div style="text-align:center;padding:16px;color:var(--text3);font-size:13px;">Loading deadlines...</div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-header">🔥 Top Contributors This Week</div>
+          <div class="widget-body" id="feed-top-contributors">
+            <div style="text-align:center;padding:16px;color:var(--text3);font-size:13px;">Loading...</div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-header">Your Credibility Score</div>
+          <div class="widget-body" id="credibility-widget">
+            <div style="text-align:center;padding:16px;color:var(--text3);font-size:13px;">Sign in to view your score</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /main — continues in part 2 -->
+
+</body>
+</html>
+<!-- PART 2 PLACEHOLDER - will be written next -->

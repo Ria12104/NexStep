@@ -1,0 +1,11 @@
+# NexStep — .gitignore
+
+# Supabase config with real keys — NEVER commit this
+config.js
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/

@@ -44,6 +44,13 @@
       </div>
       <button id="login-btn" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;margin-top:4px;"
               onclick="NexStep.handleLogin()">Sign In</button>
+      <div class="auth-divider"><span>or try a demo</span></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="flex:1;padding:10px;font-size:13px;"
+                onclick="NexStep.handleDemoLogin('fresher')">🎓 Fresher Demo</button>
+        <button class="btn btn-ghost" style="flex:1;padding:10px;font-size:13px;"
+                onclick="NexStep.handleDemoLogin('contributor')">⭐ Contributor Demo</button>
+      </div>
       <div class="auth-switch">
         Don't have an account?
         <a onclick="NexStep.switchAuthMode('signup')">Create one →</a>
@@ -68,6 +75,13 @@
       </div>
       <button id="signup-btn" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;margin-top:4px;"
               onclick="NexStep.handleSignup()">Create Account</button>
+      <div class="auth-divider"><span>or try a demo</span></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="flex:1;padding:10px;font-size:13px;"
+                onclick="NexStep.handleDemoLogin('fresher')">🎓 Fresher Demo</button>
+        <button class="btn btn-ghost" style="flex:1;padding:10px;font-size:13px;"
+                onclick="NexStep.handleDemoLogin('contributor')">⭐ Contributor Demo</button>
+      </div>
       <div class="auth-switch">
         Already have an account?
         <a onclick="NexStep.switchAuthMode('login')">Sign in →</a>

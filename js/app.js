@@ -4,7 +4,7 @@
 // Exposes window.NexStep for inline HTML event handlers.
 // =============================================================================
 
-import { initAuth, signIn, signUp, signOut, completeProfile,
+import { initAuth, signIn, signUp, signOut, completeProfile, setDemoProfile,
          showAuthModal, getCurrentUser, getCurrentCollegeId, getCurrentRole } from './auth.js';
 import { initSidebar, getSelectedSlug, setSelectedSlug, refreshNavBadges } from './ui/sidebar.js';
 import { initFeed, changeFeedCollege, refreshFeed,
@@ -189,7 +189,43 @@ async function handleProfileComplete() {
 
 async function handleLogout() {
   await signOut();
+  // Reset role UI
+  applyRoleUI('fresher');
   showToast('Signed out. See you next time!', 'success');
+}
+
+/**
+ * Demo Login — no registration needed.
+ * Sets a fake in-memory profile with the chosen role,
+ * then loads real feed data from whatever college is selected in the sidebar.
+ */
+async function handleDemoLogin(role) {
+  // Get the currently selected college from the sidebar
+  const slug    = getSelectedSlug();
+  const college = slug ? await fetchCollegeBySlug(slug) : null;
+
+  const profile = setDemoProfile(role, college?.id ?? null);
+
+  // Apply role-gated UI
+  applyRoleUI(role);
+
+  // Load real data so the feed is populated
+  const cid = college?.id;
+  if (cid) {
+    await loadPageData(cid);
+  } else {
+    // No college selected — try to pick the first available one
+    const { fetchColleges } = await import('./api/colleges.js');
+    const colleges = await fetchColleges();
+    if (colleges.length) await loadPageData(colleges[0].id);
+  }
+
+  showToast(
+    role === 'contributor'
+      ? '⭐ Demo: you\'re logged in as a Contributor'
+      : '🎓 Demo: you\'re logged in as a Fresher',
+    'success'
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -260,6 +296,7 @@ window.NexStep = {
   handleSignup,
   handleProfileComplete,
   handleLogout,
+  handleDemoLogin,
 
   // Feed
   filterToggle:     handleFilterToggle,

@@ -106,7 +106,49 @@ export async function signIn(email, password) {
 
 /** Sign out */
 export async function signOut() {
+  // If in demo mode just clear state — no Supabase call
+  if (_currentUser?.id?.startsWith('demo-')) {
+    _currentUser    = null;
+    _currentProfile = null;
+    updateSidebarUserCard(null);
+    showAuthModal();
+    return;
+  }
   await supabase.auth.signOut();
+}
+
+/**
+ * Set a fully-local demo profile (no Supabase).
+ * Call this to enter demo mode without registration.
+ * @param {'fresher'|'contributor'} role
+ * @param {string} [collegeId]  optional — if omitted, data loads from sidebar college
+ */
+export function setDemoProfile(role, collegeId = null) {
+  const isContributor = role === 'contributor';
+  _currentUser = {
+    id:    'demo-' + role,
+    email: role + '@demo.nexstep',
+  };
+  _currentProfile = {
+    id:                'demo-' + role,
+    full_name:         isContributor ? 'Demo Contributor' : 'Demo Fresher',
+    initials:          isContributor ? 'DC' : 'DF',
+    branch:            'CSE',
+    year:              isContributor ? 'Final Year' : '1st Year',
+    role,
+    credibility_score: isContributor ? 87 : 0,
+    tips_submitted:    isContributor ? 12 : 0,
+    tips_verified:     isContributor ? 10 : 0,
+    college: collegeId ? { id: collegeId, name: 'Demo College', slug: 'demo' } : null,
+  };
+
+  hideAuthModal();
+  updateSidebarUserCard(_currentProfile);
+  // Show logout button for demo too
+  const logoutBtn = document.getElementById('sidebar-logout-btn');
+  if (logoutBtn) logoutBtn.style.display = 'block';
+
+  return _currentProfile;
 }
 
 /** Complete profile after signup */

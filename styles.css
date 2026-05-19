@@ -1265,3 +1265,20 @@ body::before {
   color: var(--accent);
   border: 1px solid rgba(245,166,35,0.25);
 }
+
+/* ── AUTH DIVIDER ("or try a demo") ── */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 12px;
+  color: var(--text3);
+  font-size: 12px;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}

@@ -86,14 +86,12 @@ async function handleCollegeChange(slug) {
 function applyRoleUI(role) {
   const isContributor = role === 'contributor';
 
-  // Always show contribute section — but dim for freshers with a tooltip
+  // Hide Contribute section entirely for freshers
   const contributeSection = document.getElementById('nav-contribute-section');
   if (contributeSection) {
-    contributeSection.style.display = '';
-    contributeSection.style.opacity = isContributor ? '1' : '0.5';
-    contributeSection.title = isContributor
-      ? ''
-      : 'Only 3rd year+ contributors can submit intel';
+    contributeSection.style.display = isContributor ? '' : 'none';
+    contributeSection.style.opacity = '1';
+    contributeSection.title = '';
   }
 
   // Show role hero banner
@@ -105,8 +103,8 @@ function applyRoleUI(role) {
   // Role badge in sidebar
   const badge = document.getElementById('user-role-badge');
   if (badge) {
-    badge.textContent  = isContributor ? '⭐ Contributor' : '🎓 Fresher';
-    badge.className    = isContributor ? 'role-chip contributor' : 'role-chip fresher';
+    badge.textContent   = isContributor ? '⭐ Contributor' : '🎓 Fresher';
+    badge.className     = isContributor ? 'role-chip contributor' : 'role-chip fresher';
     badge.style.display = '';
   }
 }

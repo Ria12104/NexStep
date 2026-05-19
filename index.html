@@ -335,6 +335,246 @@
       </div>
     </div>
   </div>
+
+  <!-- ── PAGE: ALERTS ── -->
+  <div class="page" id="page-alerts">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Smart Alerts</div>
+        <div class="section-sub">Personalized deadline nudges &amp; notifications</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="NexStep.markAllRead()">Mark All Read</button>
+    </div>
+    <div class="notif-list" style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+      <div style="text-align:center;padding:32px;color:var(--text3);font-size:13px;">Loading alerts…</div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: DEADLINE CALENDAR ── -->
+  <div class="page" id="page-calendar">
+    <div class="feed-grid">
+      <div>
+        <div class="card" style="padding:24px;">
+          <div class="section-header" style="margin-bottom:20px;">
+            <div class="card-title" style="font-size:18px;font-weight:700;">May 2025</div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost btn-sm" onclick="NexStep.calPrev()">← Prev</button>
+              <button class="btn btn-ghost btn-sm" onclick="NexStep.calNext()">Next →</button>
+            </div>
+          </div>
+          <div class="calendar-grid">
+            <div class="cal-day-label">Sun</div>
+            <div class="cal-day-label">Mon</div>
+            <div class="cal-day-label">Tue</div>
+            <div class="cal-day-label">Wed</div>
+            <div class="cal-day-label">Thu</div>
+            <div class="cal-day-label">Fri</div>
+            <div class="cal-day-label">Sat</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="widget">
+          <div class="widget-header">📅 Upcoming Deadlines</div>
+          <div class="widget-body">
+            <div class="deadline-list">
+              <div style="text-align:center;padding:16px;color:var(--text3);font-size:13px;">Loading…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: SUBMIT INTEL ── -->
+  <div class="page" id="page-submit">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Submit Intel</div>
+        <div class="section-sub">Share time-sensitive knowledge with your college</div>
+      </div>
+    </div>
+    <div class="submit-form card" style="margin-top:20px;padding:28px;max-width:760px;">
+
+      <div class="form-group">
+        <label class="form-label">Title <span>*</span></label>
+        <input id="submit-title" class="form-input" type="text"
+               placeholder="e.g. Prof. Ramesh prefers in-person office hours for grade appeals">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description <span>*</span></label>
+        <textarea id="submit-desc" class="form-input" rows="4"
+                  placeholder="Give full context — what, when, who it applies to, and why it matters."
+                  style="resize:vertical;min-height:100px;"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category <span>*</span></label>
+          <select id="submit-category" class="form-select">
+            <option value="">Select category…</option>
+            <option value="academics">📚 Academics</option>
+            <option value="research">🧑‍🔬 Research</option>
+            <option value="recruiting">🏢 Recruiting</option>
+            <option value="scholarships">💰 Scholarships</option>
+            <option value="campus">🎭 Campus Life</option>
+            <option value="faculty">👨‍🏫 Faculty Preferences</option>
+            <option value="institutional">🏛️ Institutional</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Branch</label>
+          <select id="submit-branch" class="form-select">
+            <option value="all">All Branches</option>
+            <option value="cs">CSE</option>
+            <option value="ece">ECE</option>
+            <option value="me">ME</option>
+            <option value="civil">Civil</option>
+            <option value="chemical">Chemical</option>
+            <option value="electrical">Electrical</option>
+            <option value="physics">Physics</option>
+            <option value="mathematics">Mathematics</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Urgency Level</label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div class="urgency-option urgent selected" onclick="NexStep.selectUrgency(this,'urgent')">
+            <span>🚨</span> Urgent
+            <div style="font-size:11px;opacity:0.8;">Closes in &lt;48h</div>
+          </div>
+          <div class="urgency-option high" onclick="NexStep.selectUrgency(this,'high')">
+            <span>⚡</span> High
+            <div style="font-size:11px;opacity:0.8;">This week</div>
+          </div>
+          <div class="urgency-option medium" onclick="NexStep.selectUrgency(this,'medium')">
+            <span>📌</span> Medium
+            <div style="font-size:11px;opacity:0.8;">Evergreen tip</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Deadline (optional)</label>
+          <input id="submit-deadline" class="form-input" type="datetime-local">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Source / Link (optional)</label>
+          <input id="submit-source" class="form-input" type="text"
+                 placeholder="URL, notice board, personal experience…">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tags (optional, comma-separated)</label>
+        <input id="submit-tags" class="form-input" type="text"
+               placeholder="e.g. gate, placement, mtech, internship">
+      </div>
+
+      <button id="submit-intel-btn" class="btn btn-primary"
+              style="width:100%;padding:14px;font-size:15px;margin-top:8px;"
+              onclick="NexStep.submitIntel()">
+        🚀 Submit for Verification
+      </button>
+      <div style="text-align:center;font-size:12px;color:var(--text3);margin-top:10px;">
+        Your intel enters a peer review queue before going live. You earn credibility points when verified.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: VERIFY QUEUE ── -->
+  <div class="page" id="page-verify">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Verification Queue</div>
+        <div class="section-sub" id="verify-subtitle">Peer-review pending intel from your college</div>
+      </div>
+    </div>
+    <div class="verify-queue" style="display:flex;flex-direction:column;gap:16px;margin-top:20px;">
+      <div style="text-align:center;padding:32px;color:var(--text3);font-size:13px;">Loading queue…</div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: LEADERBOARD ── -->
+  <div class="page" id="page-leaderboard">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Leaderboard</div>
+        <div class="section-sub">Top contributors at your college this semester</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:20px;padding:0;overflow:hidden;">
+      <div class="leaderboard-list">
+        <div style="text-align:center;padding:32px;color:var(--text3);font-size:13px;">Loading leaderboard…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAGE: BUSINESS MODEL ── -->
+  <div class="page" id="page-bizmodel">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Business Model</div>
+        <div class="section-sub">How NexStep sustains itself while staying student-first</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:20px;">
+
+      <div class="card" style="padding:24px;border-top:3px solid var(--accent);">
+        <div style="font-size:28px;margin-bottom:12px;">🎓</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text);">Free for Students, Always</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">
+          Core intel browsing, alerts, and verification are permanently free. No paywalls on student knowledge.
+        </div>
+      </div>
+
+      <div class="card" style="padding:24px;border-top:3px solid var(--blue);">
+        <div style="font-size:28px;margin-bottom:12px;">🏢</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text);">Recruiting Pipeline Listings</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">
+          Companies pay to post verified recruiting intel, internship timelines, and PPO tips directly to targeted branches and years.
+        </div>
+      </div>
+
+      <div class="card" style="padding:24px;border-top:3px solid var(--green);">
+        <div style="font-size:28px;margin-bottom:12px;">🏛️</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text);">Institutional Partnerships</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">
+          Colleges subscribe to get anonymized trend data — what deadlines students miss, what courses are undervalued, where alumni go.
+        </div>
+      </div>
+
+      <div class="card" style="padding:24px;border-top:3px solid var(--purple);">
+        <div style="font-size:28px;margin-bottom:12px;">💎</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text);">NexStep Pro (Alumni)</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">
+          Alumni pay a small fee to maintain their verified contributor status and access cross-college intel after graduation.
+        </div>
+      </div>
+
+      <div class="card" style="padding:24px;border-top:3px solid var(--red);">
+        <div style="font-size:28px;margin-bottom:12px;">📊</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text);">Aggregated Insight Reports</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">
+          EdTech companies and NGOs buy anonymized, aggregated reports on student career outcomes and knowledge gaps by college and branch.
+        </div>
+      </div>
+
+      <div class="card" style="padding:24px;border-top:3px solid var(--accent);">
+        <div style="font-size:28px;margin-bottom:12px;">🛡️</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text);">Our Commitment</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">
+          We never sell individual user data. Credibility scores are owned by students. The intel graph stays peer-governed.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div><!-- /main -->
 
 <!-- Toast notification container -->

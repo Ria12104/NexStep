@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   id                 UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name          TEXT NOT NULL DEFAULT '',
   initials           TEXT NOT NULL DEFAULT '?',     -- 2-char avatar text
+  role               TEXT NOT NULL DEFAULT 'fresher', -- fresher | contributor
   college_id         UUID REFERENCES public.colleges(id) ON DELETE SET NULL,
   branch             TEXT DEFAULT 'all',            -- cs, ece, me, civil, etc.
   year               TEXT DEFAULT '',               -- "Final Year", "3rd Year", etc.
